@@ -306,9 +306,17 @@ window.addEventListener('scroll', () => {
   // Scrolled class
   navbar.classList.toggle('scrolled', window.scrollY > 60);
 
-  // Back to top
+  // Back to top & Scroll Progress
   const btt = document.getElementById('back-to-top');
-  btt.classList.toggle('visible', window.scrollY > 400);
+  const bttFill = document.querySelector('.btt-bar-fill');
+  if (btt) {
+    btt.classList.toggle('visible', window.scrollY > 300);
+    if (bttFill) {
+      const scrollTotal = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = scrollTotal > 0 ? (window.scrollY / scrollTotal) * 100 : 0;
+      bttFill.style.height = `${Math.min(100, Math.max(0, progress))}%`;
+    }
+  }
 
   // Active nav
   const sections = document.querySelectorAll('section[id]');
