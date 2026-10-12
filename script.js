@@ -391,54 +391,97 @@ VanillaTilt.init(document.querySelectorAll('[data-tilt]'), {
   gyroscope: true
 });
 
-// ==================== CONTACT FORM ====================
+// ==================== CONTACT FORM (FORMSPREE AJAX) ====================
 const contactForm = document.getElementById('contactForm');
 const contactStatus = document.getElementById('contactStatus');
 
-contactForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const btn = contactForm.querySelector('.form-btn');
-  const name = document.getElementById('name').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const subject = document.getElementById('subject').value.trim();
-  const message = document.getElementById('message').value.trim();
+if (contactForm) {
+  contactForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('contactSubmitBtn') || contactForm.querySelector('.form-btn');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const subjectInput = document.getElementById('subject');
+    const messageInput = document.getElementById('message');
 
-  if (!name || !email || !message) return;
+    const name = nameInput ? nameInput.value.trim() : '';
+    const email = emailInput ? emailInput.value.trim() : '';
+    const subject = subjectInput ? subjectInput.value.trim() : '';
+    const message = messageInput ? messageInput.value.trim() : '';
 
-  // Show Sending state
-  btn.disabled = true;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Sending...</span>';
-  if (contactStatus) {
-    contactStatus.className = 'contact-status sending';
-    contactStatus.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Submitting message...';
-  }
-
-  // Simulate network dispatch with guaranteed in-page success feedback
-  setTimeout(() => {
-    btn.innerHTML = '<i class="fas fa-check"></i> <span>Message Sent!</span>';
-    btn.style.background = 'linear-gradient(135deg, #10b981, #047857)';
-
-    if (contactStatus) {
-      contactStatus.className = 'contact-status success';
-      contactStatus.innerHTML = '<i class="fas fa-check-circle"></i> Thank you, ' + name + '! Your message has been sent successfully.';
+    if (!name || !email || !message) {
+      if (contactStatus) {
+        contactStatus.className = 'contact-status error';
+        contactStatus.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please fill in all required fields.';
+      }
+      return;
     }
 
-    contactForm.reset();
+    // Set UI to loading state
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Sending...</span>';
+    }
+    if (contactStatus) {
+      contactStatus.className = 'contact-status sending';
+      contactStatus.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Submitting your message to Syed...';
+    }
 
-    setTimeout(() => {
-      btn.disabled = false;
-      btn.innerHTML = '<span>Send Message</span><i class="fas fa-paper-plane"></i>';
-      btn.style.background = '';
-    }, 4000);
+    const formData = new FormData(contactForm);
 
-    setTimeout(() => {
-      if (contactStatus) {
-        contactStatus.className = 'contact-status';
-        contactStatus.innerHTML = '';
+    try {
+      const response = await fetch('https://formspree.io/f/xaeqdljo', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        if (btn) {
+          btn.innerHTML = '<i class="fas fa-check"></i> <span>Message Sent!</span>';
+          btn.style.background = 'linear-gradient(135deg, #10b981, #047857)';
+        }
+        if (contactStatus) {
+          contactStatus.className = 'contact-status success';
+          contactStatus.innerHTML = '<i class="fas fa-check-circle"></i> Thank you, ' + name + '! Your message has been sent to Syed\'s inbox.';
+        }
+        contactForm.reset();
+      } else {
+        const data = await response.json().catch(() => ({}));
+        let errorMsg = 'Oops! There was a problem submitting your form.';
+        if (data.errors && data.errors.length) {
+          errorMsg = data.errors.map(err => err.message).join(', ');
+        }
+        if (contactStatus) {
+          contactStatus.className = 'contact-status error';
+          contactStatus.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${errorMsg}`;
+        }
       }
-    }, 7000);
-  }, 900);
-});
+    } catch (err) {
+      if (contactStatus) {
+        contactStatus.className = 'contact-status error';
+        contactStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Network error. Please try again or reach out directly via WhatsApp/Email.';
+      }
+    } finally {
+      setTimeout(() => {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<span>Send Message</span><i class="fas fa-paper-plane"></i>';
+          btn.style.background = '';
+        }
+      }, 4000);
+
+      setTimeout(() => {
+        if (contactStatus && contactStatus.classList.contains('success')) {
+          contactStatus.className = 'contact-status';
+          contactStatus.innerHTML = '';
+        }
+      }, 8000);
+    }
+  });
+}
 
 // ==================== SMOOTH SCROLL ====================
 document.querySelectorAll('a[href^="#"]').forEach(a => {
