@@ -341,6 +341,13 @@ navLinks.forEach(link => {
     navbar.classList.remove('mobile-open');
   });
 });
+const navHireBtn = document.querySelector('.nav-cta .btn-hire');
+if (navHireBtn) {
+  navHireBtn.addEventListener('click', () => {
+    hamburger.classList.remove('active');
+    navbar.classList.remove('mobile-open');
+  });
+}
 
 // Back to top
 document.getElementById('back-to-top').addEventListener('click', () => {
