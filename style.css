@@ -130,6 +130,8 @@ img { max-width:100%; }
 /* Inner glowing dot */
 .cursor {
   position: fixed;
+  top: 0;
+  left: 0;
   width: 10px;
   height: 10px;
   border-radius: 50%;
@@ -140,27 +142,33 @@ img { max-width:100%; }
     0 0 40px rgba(99,102,241,0.3);
   pointer-events: none;
   z-index: 10001;
-  transform: translate(-50%, -50%);
-  transition: width 0.25s ease, height 0.25s ease, opacity 0.25s ease;
+  opacity: 0;
+  transition: width 0.2s ease, height 0.2s ease, opacity 0.2s ease, background 0.2s ease;
   will-change: transform;
 }
 
-/* Outer animated ring */
+/* Outer animated ring container */
 .cursor-follower {
   position: fixed;
+  top: 0;
+  left: 0;
   width: 38px;
   height: 38px;
   border-radius: 50%;
   pointer-events: none;
   z-index: 10000;
-  transform: translate(-50%, -50%);
+  opacity: 0;
   transition:
-    width   0.35s cubic-bezier(0.4,0,0.2,1),
-    height  0.35s cubic-bezier(0.4,0,0.2,1),
-    opacity 0.35s ease;
+    width   0.25s cubic-bezier(0.4,0,0.2,1),
+    height  0.25s cubic-bezier(0.4,0,0.2,1),
+    opacity 0.25s ease;
   will-change: transform;
+}
 
-  /* spinning gradient border via conic-gradient */
+.cursor-follower-ring {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
   background: conic-gradient(
     from 0deg,
     var(--primary) 0%,
@@ -169,9 +177,7 @@ img { max-width:100%; }
     var(--primary) 70%,
     var(--secondary) 100%
   );
-  animation: ring-spin 1.8s linear infinite;
-
-  /* Mask: show only the border ring */
+  animation: ring-spin 2s linear infinite;
   -webkit-mask:
     radial-gradient(farthest-side, transparent calc(100% - 2px), #fff calc(100% - 2px));
   mask:
@@ -179,7 +185,7 @@ img { max-width:100%; }
 }
 
 @keyframes ring-spin {
-  to { transform: translate(-50%, -50%) rotate(360deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* Hover state: inner dot shrinks + outer ring expands + changes color */
@@ -195,6 +201,8 @@ img { max-width:100%; }
 .cursor-follower.hovering {
   width: 56px;
   height: 56px;
+}
+.cursor-follower.hovering .cursor-follower-ring {
   background: conic-gradient(
     from 0deg,
     var(--secondary) 0%,
@@ -203,14 +211,7 @@ img { max-width:100%; }
     var(--secondary) 70%,
     var(--primary) 100%
   );
-  -webkit-mask:
-    radial-gradient(farthest-side, transparent calc(100% - 2px), #fff calc(100% - 2px));
-  mask:
-    radial-gradient(farthest-side, transparent calc(100% - 2px), #fff calc(100% - 2px));
-  animation: ring-spin-fast 0.8s linear infinite;
-}
-@keyframes ring-spin-fast {
-  to { transform: translate(-50%, -50%) rotate(360deg); }
+  animation-duration: 0.8s;
 }
 
 /* Click burst */
@@ -220,8 +221,8 @@ img { max-width:100%; }
   opacity: 0.6;
 }
 .cursor-follower.clicking {
-  width: 70px;
-  height: 70px;
+  width: 68px;
+  height: 68px;
   opacity: 0.4;
 }
 

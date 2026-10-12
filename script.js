@@ -18,47 +18,59 @@ window.addEventListener('load', () => {
 // ==================== CURSOR ====================
 const cursor = document.querySelector('.cursor');
 const follower = document.querySelector('.cursor-follower');
-let mouseX = 0, mouseY = 0;
-let followerX = 0, followerY = 0;
+let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+let cursorX = mouseX, cursorY = mouseY;
+let followerX = mouseX, followerY = mouseY;
+let cursorVisible = false;
 
-// Move inner dot instantly
+// Track mouse position with passive listener
 document.addEventListener('mousemove', (e) => {
   mouseX = e.clientX;
   mouseY = e.clientY;
-  cursor.style.left = mouseX + 'px';
-  cursor.style.top  = mouseY + 'px';
-});
+  if (!cursorVisible) {
+    cursorVisible = true;
+    cursor.style.opacity = '1';
+    follower.style.opacity = '1';
+  }
+}, { passive: true });
 
-// Smooth-lag outer ring via RAF
-function animateFollower() {
-  followerX += (mouseX - followerX) * 0.10;
-  followerY += (mouseY - followerY) * 0.10;
-  follower.style.left = followerX + 'px';
-  follower.style.top  = followerY + 'px';
-  requestAnimationFrame(animateFollower);
+// Butter-smooth hardware-accelerated RAF loop with lerp
+function renderCursor() {
+  // Cursor inner dot follows almost instantaneously (crisp feel)
+  cursorX += (mouseX - cursorX) * 0.75;
+  cursorY += (mouseY - cursorY) * 0.75;
+  cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
+
+  // Follower ring follows smoothly (0.18 for responsive yet fluid feel)
+  followerX += (mouseX - followerX) * 0.18;
+  followerY += (mouseY - followerY) * 0.18;
+  follower.style.transform = `translate3d(${followerX}px, ${followerY}px, 0) translate(-50%, -50%)`;
+
+  requestAnimationFrame(renderCursor);
 }
-animateFollower();
+requestAnimationFrame(renderCursor);
 
-// Hovering state — covers ALL interactive elements
-const hoverTargets = document.querySelectorAll(
-  'a, button, input, textarea, [data-tilt], label, ' +
+// Efficient event delegation for hover states (replaces dozens of individual listeners)
+const hoverSelector = 'a, button, input, textarea, select, [data-tilt], label, ' +
   '.nav-link, .btn-primary, .btn-secondary, .btn-outline, .btn-hire, ' +
   '.social-link, .project-card, .cert-card, .soft-skill, ' +
   '.lang-bubble, .db-card, .contact-link-item, .skill-bar-item, ' +
   '.hamburger, #back-to-top, .overlay-btn, .project-link, ' +
-  '.orbit-planet, .float-stat, .footer-socials a, .ai-skill-tag'
-);
+  '.orbit-planet, .float-stat, .footer-socials a, .ai-skill-tag';
 
-hoverTargets.forEach(el => {
-  el.addEventListener('mouseenter', () => {
+document.addEventListener('mouseover', (e) => {
+  if (e.target.closest(hoverSelector)) {
     cursor.classList.add('hovering');
     follower.classList.add('hovering');
-  });
-  el.addEventListener('mouseleave', () => {
+  }
+}, { passive: true });
+
+document.addEventListener('mouseout', (e) => {
+  if (e.target.closest(hoverSelector)) {
     cursor.classList.remove('hovering');
     follower.classList.remove('hovering');
-  });
-});
+  }
+}, { passive: true });
 
 // Click burst effect
 document.addEventListener('mousedown', () => {
