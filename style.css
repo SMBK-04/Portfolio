@@ -1275,11 +1275,12 @@ section {
   justify-content:center;
   position:relative;
 }
-.pos-visual   { background: linear-gradient(135deg, #1e1b4b, #312e81); }
-.ecom-visual  { background: linear-gradient(135deg, #0c4a6e, #0369a1); }
-.ai-visual    { background: linear-gradient(135deg, #064e3b, #047857); }
-.inv-visual   { background: linear-gradient(135deg, #3b0764, #6b21a8); }
-.anon-visual  { background: linear-gradient(135deg, #1c1917, #374151); }
+.pos-visual       { background: linear-gradient(135deg, #1e1b4b, #312e81); }
+.desktop-visual   { background: linear-gradient(135deg, #1e293b, #0f766e); }
+.ecom-visual      { background: linear-gradient(135deg, #0c4a6e, #0369a1); }
+.ai-visual        { background: linear-gradient(135deg, #064e3b, #047857); }
+.inv-visual       { background: linear-gradient(135deg, #3b0764, #6b21a8); }
+.anon-visual      { background: linear-gradient(135deg, #1c1917, #374151); }
 
 .pv-icons {
   display:flex;
