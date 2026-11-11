@@ -226,10 +226,9 @@ function initTyped() {
     strings: [
       'Full Stack Developer',
       'ASP.NET Core Engineer',
-      'ERP/CRM Specialist',
-      'AI & Data Enthusiast',
-      'Power Platform Developer',
-      'Problem Solver 🚀'
+      'ERP & Dynamics 365 Developer',
+      'C# & .NET 8 Backend Engineer',
+      'Cloud & Web Solutions'
     ],
     typeSpeed: 55,
     backSpeed: 30,
