@@ -490,8 +490,9 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     const target = document.querySelector(a.getAttribute('href'));
     if (target) {
       e.preventDefault();
-      const y = target.getBoundingClientRect().top + window.scrollY - 80;
-      window.scrollTo({ top: y, behavior: 'smooth' });
+      const navHeight = document.getElementById('navbar') ? document.getElementById('navbar').offsetHeight : 70;
+      const y = target.getBoundingClientRect().top + window.scrollY - navHeight;
+      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
     }
   });
 });

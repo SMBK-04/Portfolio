@@ -298,10 +298,11 @@ img { max-width:100%; }
 section {
   position: relative;
   z-index: 1;
-  padding: 110px 0;
+  padding: 60px 0 80px;
   width: 100%;
   max-width: 100%;
   overflow: hidden;
+  scroll-margin-top: 75px;
 }
 .section-container {
   max-width: min(1200px, 92vw);
@@ -309,7 +310,7 @@ section {
   width: 100%;
   padding: 0;
 }
-.section-header { text-align:center; margin-bottom:4rem; }
+.section-header { text-align:center; margin-bottom:2.2rem; }
 .section-tag {
   display:inline-flex;
   align-items:center;
