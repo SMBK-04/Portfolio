@@ -275,7 +275,9 @@ function animateHeroOnLoad() {
     onEnter: () => {
       document.querySelectorAll('.counter').forEach(el => {
         const target = parseFloat(el.dataset.target);
-        const isFloat = !Number.isInteger(target);
+        const targetStr = el.dataset.target || '';
+        const decimals = targetStr.includes('.') ? targetStr.split('.')[1].length : 0;
+        const isFloat = decimals > 0;
         let start = 0;
         const duration = 2000;
         const startTime = performance.now();
@@ -284,9 +286,9 @@ function animateHeroOnLoad() {
           const progress = Math.min(elapsed / duration, 1);
           const ease = 1 - Math.pow(1 - progress, 3);
           const val = start + (target - start) * ease;
-          el.textContent = isFloat ? val.toFixed(1) : Math.floor(val);
+          el.textContent = isFloat ? val.toFixed(decimals) : Math.floor(val);
           if (progress < 1) requestAnimationFrame(update);
-          else el.textContent = isFloat ? target.toFixed(1) : target;
+          else el.textContent = targetStr;
         }
         requestAnimationFrame(update);
       });
